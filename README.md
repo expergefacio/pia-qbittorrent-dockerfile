@@ -1,5 +1,5 @@
 # pia-qbittorrent-dockerfile
-´´´
+```
 Sets up headless qbittorrent in docker with:
   thrnz/docker-wireguard-pia
   nginx to route localhost:8090
@@ -31,10 +31,11 @@ docker-compose.yml
       - /mnt/drive/contents/downloads:/downloads
       - /mnt/drive/contents/incomplete:/incomplete
       - ./pia-shared:/pia-shared:ro
-´´´
+
 and your qbit-creds in update-qbit-port.sh
   
   QBIT_USER="admin"
   QBIT_PASS="adminadmin"
 
 And that should be it 😎
+```
