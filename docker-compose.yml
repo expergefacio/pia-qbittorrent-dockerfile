@@ -1,0 +1,62 @@
+services:
+  wireguard:
+    image: thrnz/docker-wireguard-pia
+    container_name: wireguard-qbit
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - USER=p0000000
+      - PASS=00000000
+      - LOC=swiss
+      - PORT_FORWARDING=1
+      - LOCAL_NETWORK=192.168.1.0/24
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    volumes:
+      - ./pia:/pia
+      - ./pia-shared:/pia-shared
+      - /lib/modules:/lib/modules
+    restart: unless-stopped
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: qbittorrent
+    network_mode: "service:wireguard"
+    depends_on:
+      - wireguard
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - WEBUI_PORT=8080
+    volumes:
+      - /home/expergefacio/qbittorrent/config:/config
+      - /mnt/cocopop/contents/downloads:/downloads
+      - /home/expergefacio/qbittorrent/vue:/vue
+      - /mnt/cocopop/contents/downloads:/downloads
+      - /mnt/cocopop/contents/incomplete:/incomplete
+      - /mnt/cocopop/contents/tv:/tv
+      - /mnt/cocopop/contents/movies:/movies
+      - ./pia-shared:/pia-shared:ro
+    restart: unless-stopped
+  proxy:
+    image: nginx:alpine
+    container_name: qbittorrent-proxy
+    ports:
+      - "8090:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - qbittorrent
+    restart: unless-stopped
+
+  port-sync:
+    build: ./qbit-port-sync
+    container_name: qbit-port-sync
+    depends_on:
+      - qbittorrent
+    volumes:
+      - ./pia-shared:/pia-shared:ro
+    network_mode: "service:wireguard"
+    restart: unless-stopped
