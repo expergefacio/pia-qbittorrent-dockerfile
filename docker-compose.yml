@@ -31,14 +31,10 @@ services:
       - TZ=Etc/UTC
       - WEBUI_PORT=8080
     volumes:
-      - /home/expergefacio/qbittorrent/config:/config
-      - /mnt/cocopop/contents/downloads:/downloads
-      - /home/expergefacio/qbittorrent/vue:/vue
-      - /mnt/cocopop/contents/downloads:/downloads
-      - /mnt/cocopop/contents/incomplete:/incomplete
-      - /mnt/cocopop/contents/tv:/tv
-      - /mnt/cocopop/contents/movies:/movies
-      - ./pia-shared:/pia-shared:ro
+      - /home/username/qbittorrent/config:/config
+      - /home/username/qbittorrent/vue:/vue
+      - /mnt/drive/contents/downloads:/downloads
+      - /mnt/drive/contents/incomplete:/incomplete
     restart: unless-stopped
   proxy:
     image: nginx:alpine
